@@ -7,11 +7,37 @@
   </head>
 
   <body>
-    <h1 class="titulo">Busqueda de Universidades por Region:</h1>
+    <h1 class="titulo">Busqueda de Universidades por Region</h1>
     <div class="centrar">
       <form action="cgi-bin/lectura.pl">
         <label for="departamento">Lugar: </label>
-        <input type="text" id="departamento" name="departamento"><br><br>
+        <select id="departamento" name="departamento">
+          <option value="Amazonas">Amazonas</option>
+          <option value="Áncash">Áncash</option>
+          <option value="Apurímac">Apurímac</option><!--Error o.O-->
+          <option value="Arequipa">Arequipa</option>
+          <option value="Ayacucho">Ayacucho</option>
+          <option value="Cajamarca">Cajamarca</option>
+          <option value="Callao">Callao</option>
+          <option value="Cusco">Cusco</option>
+          <option value="Huancavelica">Huancavelica</option>
+          <option value="Huánuco">Huánuco</option><!--Error o.O-->
+          <option value="Ica">Ica</option>
+          <option value="Junín">Junín</option><!--Error o.O-->
+          <option value="La Libertad">La Libertad</option>
+          <option value="Lambayeque">Lambayeque</option>
+          <option value="Lima">Lima</option>
+          <option value="Loreto">Loreto</option>
+          <option value="Madre de Dios">Madre de Dios</option>
+          <option value="Moquegua">Moquegua</option>
+          <option value="Pasco">Pasco</option>
+          <option value="Piura">Piura</option>
+          <option value="Puno">Puno</option>
+          <option value="San Martín">San Martín</option><!--Error o.O-->
+          <option value="Tacna">Tacna</option>
+          <option value="Tumbes">Tumbes</option>
+          <option value="Ucayali">Ucayali</option>
+        </select>
         <input type="submit" value="Enviar">
       </form>
     </div>
