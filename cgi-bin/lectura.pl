@@ -2,10 +2,16 @@
 use strict;
 use warnings;
 use CGI;
+use Encode qw/ decode /;
 
 my $q = CGI->new;
 my $departamento = uc($q->param("departamento"));
+$departamento = decode("UTF-8", $departamento);
 print $q->header("text/html");
+#print $q->header(
+#  -type => "text/html",
+#  -charset => "utf-8"
+#);
 print<<HTML;
 <!DOCTYPE html>
 <html lang="es">
@@ -15,7 +21,7 @@ print<<HTML;
   <link rel="stylesheet" href="../css/estilos.css">
 </head>
 <body>
-  <h1>Resultados de la Consulta Realizada:</h1>
+  <h1 class="titulo">Resultados de la Consulta Realizada:</h1>
 HTML
 
 #Aplicacion de las Subrutinas
@@ -34,6 +40,7 @@ print "</table>";
 
 #Se imprime la cola del texto HTML
 print<<HTML;
+    <br>
     Ingrese <a href="../consulta.html">aqui</a> para regresar al formulario de busqueda
   </body>
 </html>
