@@ -4,31 +4,38 @@ use warnings;
 use CGI;
 
 my $q = CGI->new;
-my $region = uc($q->param("lugar"));
+my $departamento = uc($q->param("departamento"));
 print $q->header("text/html");
 print<<HTML;
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Resultados de la Consulta</title>
+  <meta charset="utf-8">
+  <title>Busquedas de Universidades de Programación Web 1</title>
+  <link rel="stylesheet" href="../css/estilos.css">
 </head>
 <body>
-  <h1>Resultados de la Consulta:</h1>
+  <h1>Resultados de la Consulta Realizada:</h1>
 HTML
 
-#Leyendo todo el archivo en un arreglo de Strings
-open(IN, "Programas de Universidades.csv") or die("Error al abrir el archivo");
-my @arr = <IN>;
-close(IN);
-
 #Aplicacion de las Subrutinas
-my %universidades = recolectarUniversidades($region, "Programas de Universidades.csv");
+my %universidades = recolectarUniversidades($departamento, "Programas de Universidades.csv");
+
+#Mostramos la Informacion Recolectada en Forma de una Tabla
+print<<HTML;
+<table>
+  <tr>
+    <th>Universidad Encontrada</th>
+    <th>Numero de Carreras (Entre Pregrado y Posgrado)</th>
+  </tr>
+HTML
 mostrarArreglo(%universidades);
+print "</table>";
 
 #Se imprime la cola del texto HTML
 print<<HTML;
-</body>
+    Ingrese <a href="../consulta.html">aqui</a> para regresar al formulario de busqueda
+  </body>
 </html>
 HTML
 
@@ -36,10 +43,11 @@ HTML
 sub recolectarUniversidades {
   my $str = $_[0];
   my $fileName = $_[1];
-
-  open(FILE, $fileName) or die("Error al abrir el Archivo!!!");
-  my @arreglo = <FILE>; 
-  close(FILE);
+  
+  #Leyendo todas las lineas del Archivo
+  open(IN, $fileName) or die("Error al abrir el Archivo!!!");
+  my @arreglo = <IN>; 
+  close(IN);
   
   my $size = contarColumnas($arreglo[0]);
   my $pattern = construirRegExp($size);
@@ -49,7 +57,7 @@ sub recolectarUniversidades {
     if($linea =~ /$pattern/) {
       my $departamento = $11; 
       my $universidad = $2;
-      if($departamento eq $region) {
+      if($departamento eq $str) {
         my $cont = $universidades{$universidad};
         if(!defined($cont)) {
           $universidades{$universidad} = 1;
@@ -68,13 +76,16 @@ sub recolectarUniversidades {
 sub mostrarArreglo {
   my %dict = @_;
   foreach my $universidad (keys %universidades) {
-    print "<p>$universidad: $universidades{$universidad}</p>\n";
+    print "<tr>\n";
+    print "<td>$universidad</td>\n";
+    print "<td>$universidades{$universidad}</td>\n";
+    print "</tr>\n";
   }
 }
 
 #Subrutina que cuenta el Numero de Columnas del Encabezado
 sub contarColumnas {
-  my $line = $arr[0];
+  my $line = $_[0];
   my $counter = 1;
   while($line =~ /^([^\|]+)\|(.+)/){
     $counter++;
