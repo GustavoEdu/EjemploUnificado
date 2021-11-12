@@ -4,7 +4,7 @@ use warnings;
 use CGI;
 
 my $q = CGI->new;
-my $region = $q->param("lugar");
+my $region = uc($q->param("lugar"));
 print $q->header("text/html");
 print<<HTML;
 <!DOCTYPE html>
@@ -49,7 +49,7 @@ sub recolectarUniversidades {
     if($linea =~ /$pattern/) {
       my $departamento = $11; 
       my $universidad = $2;
-      if($departamento eq "AREQUIPA") {
+      if($departamento eq $region) {
         my $cont = $universidades{$universidad};
         if(!defined($cont)) {
           $universidades{$universidad} = 1;
