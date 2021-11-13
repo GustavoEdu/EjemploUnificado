@@ -2,16 +2,10 @@
 use strict;
 use warnings;
 use CGI;
-use Encode qw/ decode /;
 
 my $q = CGI->new;
 my $departamento = uc($q->param("departamento"));
-$departamento = decode("UTF-8", $departamento);
 print $q->header("text/html");
-#print $q->header(
-#  -type => "text/html",
-#  -charset => "utf-8"
-#);
 print<<HTML;
 <!DOCTYPE html>
 <html lang="es">
