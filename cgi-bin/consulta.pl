@@ -2,9 +2,13 @@
 use strict;
 use warnings;
 use CGI;
+use Encode qw/ decode /;
 
 my $q = CGI->new;
-my $departamento = uc($q->param("departamento"));
+my $departamento = $q->param("departamento");
+$departamento = decode("UTF-8", $departamento);
+$departamento = uc($departamento);
+
 print $q->header(
   -type => "text/html",
   -charset => "utf-8"
@@ -28,8 +32,11 @@ my %universidades = recolectarUniversidades($departamento);
 print<<HTML;
 <table>
   <tr>
+    <th>Código Entidad</th>
     <th>Universidad Encontrada</th>
     <th>Tipo Gestion</th>
+    <th>Estado Licenciamiento</th>
+    <th>Periodo Licenciamiento [Años]</th>
     <th>Numero de Carreras (Entre Pregrado y Posgrado)</th>
   </tr>
 HTML
@@ -91,20 +98,51 @@ sub mostrarArreglo {
   my %dict = @_;
   foreach my $universidad (keys %universidades) {
     print "<tr>\n";
+    my %uni = recolectarInformacion($universidad);
+    print "<td>$uni{'codigo'}</td>\n"; 
     print "<td>$universidad</td>\n";
-    foreach my $line (@arreglo) {
-      if($line =~ /$pattern/) {
-        my $nombre = $2;
-        if($nombre eq $universidad) {
-          my $tipoGestion = $3;
-          print "<td>$3</td>\n";
-          last;
-        }
-      }
-    }
+    print "<td>$uni{'tipoGestion'}</td>\n";
+    print "<td>$uni{'estadoLicenciamiento'}</td>";
+    print "<td>$uni{'periodoLicenciamiento'}</td>";
     print "<td>$universidades{$universidad}</td>\n";
     print "</tr>\n";
   }
+}
+
+#Recolectando toda la Información sobre una Universidad a través de una
+#clave foránea, la cual en este caso fue conveniente que fuese el
+#nombre de la Universidad en cuestión, aunque también pudo haber sido
+#el Código Entidad
+sub recolectarInformacion {
+  my $universidad = $_[0];
+  
+  #Leyendo todas las lineas del Archivo
+  open(IN, "< :encoding(Latin1)", "Programas de Universidades.csv") or die "cant't binmode to encoding Latin1";
+  binmode(IN, ":encoding(Latin1)") || die "can't binmode to encoding Latin1";
+  my @arreglo = <IN>;
+  close(IN);
+  
+  my $size = contarColumnas($arreglo[0]);
+  my $pattern = construirRegExp($size);
+
+  my %uni = ();
+  foreach my $line (@arreglo) {
+    if($line =~ /$pattern/) {
+      my $nombre = $2;
+      if($nombre eq $universidad) {
+        my $codigo = $1;
+        $uni{"codigo"} = $codigo;
+        my $tipoGestion = $3;
+        $uni{"tipoGestion"} = $tipoGestion;
+        my $estadoLicenciamiento = $4;
+        $uni{"estadoLicenciamiento"} = $estadoLicenciamiento; 
+        my $periodoLicenciamiento = $5;
+        $uni{"periodoLicenciamiento"} = $periodoLicenciamiento;
+        last;
+      }
+    }
+  } 
+  return %uni;
 }
 
 #Subrutina que cuenta el Numero de Columnas del Encabezado
