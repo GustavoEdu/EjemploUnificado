@@ -47,6 +47,8 @@ print "</table>";
 print<<HTML;
     <br>
     Ingrese <a href="../consulta.html">aqui</a> para regresar al formulario de busqueda
+    <br>
+    <br>
   </body>
 </html>
 HTML
